@@ -7,5 +7,5 @@ lex.yy.c: scanner.l parser.tab.h
 	flex scanner.l
 
 parser: lex.yy.c parser.tab.c parser.tab.h
-	gcc -o parser parser.tab.c lex.yy.c
+	g++ -std=c++11 -o parser parser.tab.c lex.yy.c
 

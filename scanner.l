@@ -2,7 +2,7 @@
 
 %{
 #define YY_DECL int yylex()
-
+#include <string.h>
 #include "parser.tab.h"
 
 %}
@@ -25,24 +25,21 @@
 "in"				return IN;
 "to"				return TO;
 
-"int"		|
-"float" 	|
-"string" 	|
-"timer"		|
-"image"				return TYPE;
+"var"				return VAR;
+"image"				return IMAGE;
 
 "~"	|
 "<"	|
-">"				return COM_OP;
+">"				yylval.s = strdup(yytext); return COM_OP;
 
 
 "+"	|
-"-"				return ADD_OP;
+"-"				yylval.s = strdup(yytext); return ADD_OP;
 
-"||"	|
-"&&"	|
+"|"	|
+"&"	|
 "*"	|
-"/"				return MUL_OP;
+"/"				yylval.s = strdup(yytext); return MUL_OP;
 
 "compress"	|
 "start"		|
@@ -51,55 +48,12 @@
 "save"		|
 "showTime"	|
 "show"		|
-"setParams"			return PROCEDURE;
+"setParams"			yylval.s = strdup(yytext); return PROCEDURE;
 
-[a-zA-Z]([a-zA-z]|[0-9])*	return IDENT;
-
-[1-9][0-9]*|0			return INT_VALUE;
-([1-9][0-9]*|0)"."[0-9]+	return FLOAT_VALUE;
-L?\"(\\.|[^\\"])*\"		return STRING_VALUE;
+[1-9][0-9]*|0			yylval.s = strdup(yytext); return INT_VALUE;
+([1-9][0-9]*|0)"."[0-9]+	printf("XDDDD"); yylval.s = strdup(yytext); return FLOAT_VALUE;
+L?\"(\\.|[^\\"])*\"		yylval.s = strdup(yytext); return STRING_VALUE;
+[a-zA-Z]([a-zA-z]|[0-9])*	yylval.s = strdup(yytext); return IDENT;
 
 
 %%
-/*#include "Scanner.h"
-#include <iostream>
-#include <string>
-
-using namespace std;
-int main()
-{
-	yylex();
-	Token t;
-	Scanner scanner;
-	printf("Give me your input:\n");
-	while((t = (Token)yylex()) > 0)
-	{
-		scanner.setToken(t);
-		if(t == float_value)
-		{
-			float *f = new float;
-			*f = std::stof(yytext);
-			scanner.setValue(f);
-			scanner.setSize(sizeof(float));
-			std::cout << *f;
-		}
-		else if(t == int_value)
-		{
-			int *i = new int;
-			*i = std::stoi(yytext);
-			scanner.setValue(i);
-			scanner.setSize(sizeof(int));
-			std::cout << *i;
-		}
-		else
-		{
-			string *s = new string;
-			*s = yytext;
-			scanner.setValue(s);
-			scanner.setSize(s->size());	
-			std::cout<< *s;
-		}
-		//TODO, parser should get next token and do something with it
-	}
-	return 0;
-}*/
