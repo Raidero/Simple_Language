@@ -4,7 +4,6 @@
 #define YY_DECL int yylex()
 #include <string.h>
 #include "parser.tab.h"
-
 %}
 
 %%
@@ -24,6 +23,7 @@
 "for"				return FOR;
 "in"				return IN;
 "to"				return TO;
+"else"				return ELSE;
 
 "var"				return VAR;
 "image"				return IMAGE;
