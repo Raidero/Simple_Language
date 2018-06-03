@@ -1,0 +1,37 @@
+var a,b,c,d,e,f;
+a = "success";
+b = "failure";
+d = 10;
+e = 150.232;
+f = 222.3;
+
+for(i in 4 to 6)
+{
+	show i;
+	show f;
+	c = e*f*i;
+	show c;
+}
+
+if((c > 1000000) | (e < 200))
+{
+	show a;
+}
+else
+{
+	show b;
+}
+
+if((c > 1000000) & (e < 200))
+{
+	show a;
+}
+else
+{
+	show b;
+}
+
+for(j in 1 to 1000000)
+{
+	show j;
+}

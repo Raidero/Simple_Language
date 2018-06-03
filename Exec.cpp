@@ -210,7 +210,7 @@ char* execExpr(struct AstElement* left, struct AstElement* right, char* op)
 	}
 	double d1 = atof(leftval);
 	double d2 = atof(rightval);
-	if(d1 != 0.0 && d2 != 0.0)
+	//if(d1 != 0.0 && d2 != 0.0)
 	{
 		switch((int)op[0])
 		{
@@ -243,11 +243,11 @@ char* execExpr(struct AstElement* left, struct AstElement* right, char* op)
 			break;
 		}
 	}
-	else
-	{
-		printf("Cannot convert given value to float: %s or %s\n", leftval, rightval);
-		exit(0);
-	}
+	//else
+	//{
+	//	printf("Cannot convert given value to float: %s or %s\n", leftval, rightval);
+	//	exit(0);
+	//}
 	return ftoa(d1);
 }
 
