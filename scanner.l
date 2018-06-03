@@ -51,7 +51,7 @@
 "setParams"			yylval.s = strdup(yytext); return PROCEDURE;
 
 [1-9][0-9]*|0			yylval.s = strdup(yytext); return INT_VALUE;
-([1-9][0-9]*|0)"."[0-9]+	printf("XDDDD"); yylval.s = strdup(yytext); return FLOAT_VALUE;
+([1-9][0-9]*|0)"."[0-9]+	yylval.s = strdup(yytext); return FLOAT_VALUE;
 L?\"(\\.|[^\\"])*\"		yylval.s = strdup(yytext); return STRING_VALUE;
 [a-zA-Z]([a-zA-z]|[0-9])*	yylval.s = strdup(yytext); return IDENT;
 
