@@ -3,12 +3,20 @@
 #include "Ast.h"
 struct AstElement;
 
+typedef struct
+{
+	int width;
+	int height;
+	char* filename;
+	FILE* fd;
+} Image;
+
 void execCompStat(struct AstElement* ast);
 
 
 void execStat(struct AstElement* ast);
 
-void execProc(char* name, char* param);
+void execProc(char* name, char* param1, char* param2);
 
 void execAssignment(char* name, struct AstElement* ast);
 

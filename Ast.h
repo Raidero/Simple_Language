@@ -43,7 +43,8 @@ struct AstElement
         struct
         {
             char* name;
-            char* param;
+            char* param1;
+	    char* param2;
         }call;
 	struct
 	{
@@ -69,7 +70,7 @@ struct AstElement* makeExpByName(char* name);
 struct AstElement* makeExp(struct AstElement* left, struct AstElement* right, char* op);
 struct AstElement* makeStat(struct AstElement* dest, struct AstElement* toAppend);
 struct AstElement* makeFor(char* id, char* from, char* to, struct AstElement* exec);
-struct AstElement* makeFunc(char* name, char* param);
+struct AstElement* makeFunc(char* name, char* param1, char* param2);
 struct AstElement* makeIf(struct AstElement* cond, struct AstElement* exec);
 struct AstElement* makeElse(struct AstElement* exec);
 struct AstElement* makeIfElse(struct AstElement* ekif, struct AstElement* ekelse);

@@ -5,17 +5,13 @@
 #include <stdio.h>
 #include <iostream>
 
+void loadImage(char* filename, int dst);
+
 void execCompStat(struct AstElement* ast)
 {
-	//std::cout << "Comp stat\n" << std::endl;
-	//std::cout << ast << std::endl;
 	for(int i = 0; i < ast->data.statements.count; ++i)
 	{	
-		//std::cout << ekAssignment << std::endl;
-		
 		if(ast->data.statements.statements[i] != NULL)
-			//std::cout << "Declaration\n" <<std::endl;
-		//else
 			execStat(ast->data.statements.statements[i]);
 	}
 }
@@ -23,12 +19,11 @@ void execCompStat(struct AstElement* ast)
 
 void execStat(struct AstElement* ast)
 {
-	//std::cout << "Stat\n" << std::endl;
 	int x = ast->kind;
 	switch(x)
 	{
 		case ekCall:
-			execProc(ast->data.call.name, ast->data.call.param);
+			execProc(ast->data.call.name, ast->data.call.param1, ast->data.call.param2);
 			break;
 		case ekAssignment:
 			execAssignment(ast->data.assignment.name, ast->data.assignment.right);
@@ -45,14 +40,14 @@ void execStat(struct AstElement* ast)
 	}
 }
 
-void execProc(char* name, char* param)
+void execProc(char* name, char* param1, char* param2)
 {
 	if(!strcmp("show", name))
 	{
 		bool found = false;
 		for(int i = 0; i < variables[level].size(); ++i)
 		{
-			if(!strcmp(variables[level][i].first, param))
+			if(!strcmp(variables[level][i].first, param1))
 			{
 				std::cout << variables[level][i].second << '\n';
 				found = true;
@@ -61,7 +56,52 @@ void execProc(char* name, char* param)
 		}
 		if(!found)
 		{
-			printf("Didn't find given ident: %s\n", param);
+			printf("Didn't find given ident: %s\n", param1);
+			exit(0);
+		}
+	}
+	else if(!strcmp("load", name))
+	{
+		bool found1 = false, found2 = false;
+		int index;
+		char* filename;
+		for(int i = 0; i < variables[level].size(); ++i)
+		{
+			if(!strcmp(variables[level][i].first, param1))
+			{
+				filename = variables[level][i].second;
+				found1 = true;
+			}
+			if(!strcmp(variables[level][i].first, param2))
+			{
+				index = i;
+				found2 = true;
+			}
+		}
+		if(!found1 || !found2)
+		{
+			printf("Didn't find given idents: %s %s\n", param1, param2);
+			exit(0);
+		}
+		loadImage(filename, index);
+	}
+	else if(!strcmp("getParams", name))
+	{
+		bool found = false;
+		for(int i = 0; i < variables[level].size(); ++i)
+		{
+			if(!strcmp(variables[level][i].first, param1))
+			{
+				std::cout <<"File name: "<< reinterpret_cast<Image*>(variables[level][i].second)->filename << '\n';
+				std::cout <<"Width: " << reinterpret_cast<Image*>(variables[level][i].second)->width << '\n';
+				std::cout <<"Height: " << reinterpret_cast<Image*>(variables[level][i].second)->height << '\n';
+				found = true;
+				break;
+			}
+		}
+		if(!found)
+		{
+			printf("Didn't find given ident: %s\n", param1);
 			exit(0);
 		}
 	}
@@ -210,44 +250,36 @@ char* execExpr(struct AstElement* left, struct AstElement* right, char* op)
 	}
 	double d1 = atof(leftval);
 	double d2 = atof(rightval);
-	//if(d1 != 0.0 && d2 != 0.0)
+	switch((int)op[0])
 	{
-		switch((int)op[0])
-		{
-			case '>':
-			d1 = d1 > d2;
-			break;
-			case '<':
-			d1 = d1 < d2;
-			break;
-			case '~':
-			d1 = d1 == d2;
-			break;
-			case '+':
-			d1 = d1 + d2;
-			break;
-			case '-':
-			d1 = d1 - d2;
-			break;
-			case '/':
-			d1 = d1 / d2;
-			break;
-			case '*':
-			d1 = d1 * d2;
-			break;
-			case '&':
-			d1 = d1 && d2;
-			break;
-			case '|':
-			d1 = d1 || d2;
-			break;
-		}
+		case '>':
+		d1 = d1 > d2;
+		break;
+		case '<':
+		d1 = d1 < d2;
+		break;
+		case '~':
+		d1 = d1 == d2;
+		break;
+		case '+':
+		d1 = d1 + d2;
+		break;
+		case '-':
+		d1 = d1 - d2;
+		break;
+		case '/':
+		d1 = d1 / d2;
+		break;
+		case '*':
+		d1 = d1 * d2;
+		break;
+		case '&':
+		d1 = d1 && d2;
+		break;
+		case '|':
+		d1 = d1 || d2;
+		break;
 	}
-	//else
-	//{
-	//	printf("Cannot convert given value to float: %s or %s\n", leftval, rightval);
-	//	exit(0);
-	//}
 	return ftoa(d1);
 }
 
@@ -360,4 +392,26 @@ void execWhileStat(char* name, char* from, char* to, struct AstElement* whileSta
 	}
 		
 }
+
+void loadImage(char* filename, int dst)
+{
+	Image* image = (Image*)malloc(sizeof(Image));
+    	FILE* f = NULL;
+	f = fopen(filename, "rb");
+	if(f == NULL)
+	{
+		printf("Error file name: %s\n", filename);
+		exit(0);
+	}
+	image->fd = f;
+	image->filename = filename;
+
+    	unsigned char info[54];
+    	fread(info, sizeof(unsigned char), 54, f);
+    	image->width = *(int*)&info[18];
+    	image->height = *(int*)&info[22];
+	variables[level][dst].second = (char*)image;
+}
+
+
 	

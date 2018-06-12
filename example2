@@ -1,0 +1,5 @@
+var filename, image;
+filename = "test.bmp";
+load filename image;
+
+getParams image;

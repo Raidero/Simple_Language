@@ -81,12 +81,13 @@ struct AstElement* makeFor(char* id, char* from, char* to, struct AstElement* ex
     return result;
 }
 
-struct AstElement* makeFunc(char* name, char* param)
+struct AstElement* makeFunc(char* name, char* param1, char* param2)
 {
     struct AstElement* result = checkAlloc(sizeof(*result));
     result->kind = ekCall;
     result->data.call.name = name;
-    result->data.call.param = param;
+    result->data.call.param1 = param1;
+    result->data.call.param2 = param2;
     return result;
 }
 

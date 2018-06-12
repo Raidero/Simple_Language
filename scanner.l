@@ -26,7 +26,6 @@
 "else"				return ELSE;
 
 "var"				return VAR;
-"image"				return IMAGE;
 
 "~"	|
 "<"	|
@@ -48,12 +47,15 @@
 "save"		|
 "showTime"	|
 "show"		|
-"setParams"			yylval.s = strdup(yytext); return PROCEDURE;
+"getParams"			yylval.s = strdup(yytext); return PROCEDURE;
 
 [1-9][0-9]*|0			yylval.s = strdup(yytext); return INT_VALUE;
 ([1-9][0-9]*|0)"."[0-9]+	yylval.s = strdup(yytext); return FLOAT_VALUE;
-L?\"(\\.|[^\\"])*\"		yylval.s = strdup(yytext); return STRING_VALUE;
+\"(\\.|[^\\"])*\"		{  yylval.s = strdup(yytext + 1);
+				   yylval.s[yyleng-2] = 0;
+				  return STRING_VALUE;
+				}
 [a-zA-Z]([a-zA-z]|[0-9])*	yylval.s = strdup(yytext); return IDENT;
 
-
+.				{ }
 %%
